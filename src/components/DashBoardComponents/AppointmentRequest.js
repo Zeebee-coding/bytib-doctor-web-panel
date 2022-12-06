@@ -1,53 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import Img1 from "../../Assets/images/AppointmentImages/1.png";
-import Img2 from "../../Assets/images/AppointmentImages/2.png";
-import Img3 from "../../Assets/images/AppointmentImages/3.png";
-import Img4 from "../../Assets/images/AppointmentImages/4.png";
-import Img5 from "../../Assets/images/AppointmentImages/5.png";
 import Success from "../../Assets/images/Dashboard/group-10.png";
 import Fail from "../../Assets/images/Dashboard/group-15.png";
+import { Avatar } from "@mui/material";
+import db from "../../db";
+import {
+  onSnapshot,
+  collection,
+  query,
+} from "firebase/firestore";
 const AppointmentRequest = () => {
   const [toggel, setToggel] = useState("");
   const [imageToggle, setImageToggle] = useState(true);
   // const [tableId, setTableId] = useState("");
-  const [appointmentTable, setAppointmentTable] = useState([
-    {
-      id: 1,
-      name: "Ghadeer Radwan",
-      gender: "Femal , 25",
-      date: "May 10 - 9:20 am",
-      image: Img1,
-    },
-    {
-      id: 2,
-      name: "Ghadeer Radwan",
-      gender: "Femal , 25",
-      date: "May 10 - 9:20 am",
-      image: Img2,
-    },
-    {
-      id: 3,
-      name: "Ghadeer Radwan",
-      gender: "Femal , 25",
-      date: "May 10 - 9:20 am",
-      image: Img3,
-    },
-    {
-      id: 4,
-      name: "Ghadeer Radwan",
-      gender: "Femal , 25",
-      date: "May 10 - 9:20 am",
-      image: Img4,
-    },
-    {
-      id: 5,
-      name: "Ghadeer Radwan",
-      gender: "Femal , 25",
-      date: "May 10 - 9:20 am",
-      image: Img5,
-    },
-  ]);
+  const [appointment,setappointment] = useState([]);
   const toggelSuccess = () => {
     setToggel("true");
     setImageToggle(false);
@@ -56,6 +22,15 @@ const AppointmentRequest = () => {
     setToggel("fasle");
     setImageToggle(false);
   };
+  useEffect(() => {
+    async function fetchAppointmentAPI() {
+      const q = query(collection(db, "Appointment"));
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        setappointment(querySnapshot.docs.map((d) => d.data()));
+      });
+    }
+    fetchAppointmentAPI();
+  }, []);
   return (
     <>
       <AppointmentRequestContainer>
@@ -63,16 +38,16 @@ const AppointmentRequest = () => {
           <p>{"Appointment Request"}</p>
           <a href="#">{"See All"}</a>
         </HeadContainer>
-        {appointmentTable.map((ls) => (
+        {appointment.map((ls) => (
           <>
             <Body key={ls.id}>
               <BodyLeft>
-                <img src={ls.image} alt="icon" />
+              <Avatar/>
                 <NameSection>
                   <ul>
-                    <li className="name">Ghadeer Radwan</li>
-                    <li className="gender">Femal , 25</li>
-                    <li className="date">May 10 - 9:20 am</li>
+                    <li className="name">{ls.PatientName}</li>
+                    <li className="gender">{ls.PatientAge}</li>
+                    <li className="date">{ls.Slot}</li>
                   </ul>
                 </NameSection>
               </BodyLeft>
@@ -113,12 +88,10 @@ const AppointmentRequest = () => {
     </>
   );
 };
-
 export default AppointmentRequest;
-
 const AppointmentRequestContainer = styled.section`
   width: 100%;
-  height: 30rem;
+  height: auto;
   background-color: white;
   -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
@@ -187,11 +160,10 @@ align-items:center;
     cursor: pointer;
 }
 `;
-
 const BodySuccess = styled.section`
-  background-color: #ccf6f8;
+  background-color: #CCF6F8;
   padding: 5px;
-  color: #504da8;
+  color: #504DA8;
   font-size: 19px;
   font-weight: 500;
   border-radius: 10px;
@@ -203,5 +175,4 @@ const BodyFail = styled.section`
     font-size: 19px;
     font-weight: 500;
     border-radius: 10px;
-  
   `;

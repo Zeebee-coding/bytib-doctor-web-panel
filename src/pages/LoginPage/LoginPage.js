@@ -83,12 +83,14 @@ function LoginPage() {
             )}
           </div>
           <div>
-            <SignupButton
-              width="15vmax"
-              height="4vmax"
-              margin="0vmax"
-              text="Sign Up"
-            />
+            <Link to="/Signup">
+              <SignupButton
+                width="15vmax"
+                height="4vmax"
+                margin="0vmax"
+                text="Sign Up"
+              />
+            </Link>
           </div>
         </Buttons>
       </Left_Login_part>
@@ -104,16 +106,14 @@ function LoginPage() {
 export default LoginPage;
 
 const StyledContainer = styled.section`
-  overflow-x: hidden;
   display: flex;
-  overflow-y: hidden !important;
+  justify-content: space-between;
   max-height: 100vh;
-  width: 100vw;
+  width: 100%;
 `;
 
 const Left_Login_part = styled.section`
-  height: 100%;
-  width: 50%;
+  flex: 6;
   @media (min-width: ${device.mobileS}) and (max-width: ${device.tabletL}) {
     display: flex;
     flex-direction: column;
@@ -124,10 +124,6 @@ const Left_Login_part = styled.section`
 `;
 
 const LogoPart = styled.section`
-  ${'' /* display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center; */}
   max-height: 35vh;
   max-width: 35vmax;
   img {
@@ -146,13 +142,7 @@ const Input_Fields = styled.section`
   align-items: center;
 
   Input {
-    outline: none;
-    box-shadow: none;
     width: 50%;
-  }
-  Input:hover {
-    outline: none;
-    box-shadow: none;
   }
 `;
 const Login_Check_Btn = styled.section`
@@ -188,8 +178,7 @@ const Buttons = styled.section`
   }
 `;
 const Right_Login_part = styled.div`
-  height: 100%;
-  width: 50%;
+  flex: 6;
   @media (min-width: ${device.mobileS}) and (max-width: ${device.tabletL}) {
     display: none;
   }

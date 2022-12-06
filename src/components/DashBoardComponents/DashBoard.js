@@ -1,48 +1,68 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import styled from "styled-components";
 import IncreaseIcon from "../../Assets/images/Dashboard/increase.png";
 import DecreaseIcon from "../../Assets/images/Dashboard/decrease.png";
-import QuickStart from "./QuickStart";
-import Chart from "./Chart";
+import QuickStart from "../../shared/QuickStart";
+import Chart from "../../shared/Chart";
 import AppointmentRequest from "./AppointmentRequest";
 import BookingTable from "./BookingComponents/BookingTable";
 import RecentPatient from "./RecentPatient";
 import { device } from "../../shared/BreakPoints";
+import { useTranslation } from "react-i18next";
+
+import db from "../../db";
+import {
+  onSnapshot,
+  collection,
+  query,
+} from "firebase/firestore";
 function DashBoard() {
+  const { t } = useTranslation(["sidebar"])
+
+  const [appointment,setappointment] = useState([]);
+  useEffect(() => {
+    async function fetchAppointmentAPI() {
+      const q = query(collection(db, "Appointment"));
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        setappointment(querySnapshot.docs.map((d) => d.data()));
+      });
+    }
+    fetchAppointmentAPI();
+  }, []);
   return (
     <>
       <DashBoardContainer>
         <UpperPart>
-          <h2>Quick start</h2>
+          <h2>{t("quick_start")}</h2>
           <UpperPartBody>
             <UpperBodyLeft>
               <QuickStartContainer>
                 <QuickStart
-                  title={"Total Booking"}
-                  numberValue="28,345"
+                  title={t("Total Booking")}
+                  numberValue={appointment.length}
                   colorPending="normal"
                 />
                 <QuickStart
-                  title={"Pending Approval"}
+                  title={t("Pending Approval")}
                   numberValue="120"
                   colorPending="pending"
                 />
                 <QuickStart
-                  title={"New Clients this Month"}
+                  title={t("New Clients this Month")}
                   numberValue="89"
                   image={IncreaseIcon}
                   colorPending="normal"
                 />
                 <QuickStart
-                  title={"Returnig Clients"}
+                  title={t("Returnig Clients")}
                   numberValue="46%"
                   image={DecreaseIcon}
                   colorPending="normal"
                 />
               </QuickStartContainer>
-              <h3>Total Patient</h3>
+             
               <ChartCont>
-                <Chart aspect={1.86 / 1} />
+                <Chart title={t("Total_Patient")} aspect={1.86 / 1} />
               </ChartCont>
             </UpperBodyLeft>
             <div>
@@ -62,9 +82,7 @@ function DashBoard() {
     </>
   );
 }
-
 export default DashBoard;
-
 const DashBoardContainer = styled.section`
   width: 100%;
   padding: 0.8em;
@@ -72,7 +90,7 @@ const DashBoardContainer = styled.section`
   top: 0;
   flex-direction: column;
   flex-wrap: wrap;
-  background-color: #f0f1f6;
+  background-color: #F0F1F6;
   overflow-x: hidden;
   @media (min-width: ${device.mobileS}) and (max-width: ${device.laptop}) {
     align-items: center;
@@ -94,9 +112,10 @@ const UpperPartBody = styled.div`
   gap: 20px;
   flex-wrap: wrap;
 `;
-
 const ChartCont = styled.section`
   width: 100%;
+  overflow: hidden;
+
 `;
 const UpperBodyLeft = styled.section`
   width: 60%;
@@ -121,9 +140,9 @@ const QuickStartContainer = styled.section`
 `;
 const BottomPartBody = styled.section`
 display: flex;
+flex-wrap: wrap;
   width: 100%;
   gap: 20px;
- 
 `;
 const BottomBodyLeft = styled.section`
   width: 60%;

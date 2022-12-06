@@ -14,5 +14,4 @@ const DashBoardView = () => {
 export default DashBoardView
 const DashboardContainer = styled.section`
     width: 100%;
-    overflow-x: hidden;
 `;

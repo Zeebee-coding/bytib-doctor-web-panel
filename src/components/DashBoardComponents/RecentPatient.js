@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Img1 from "../../Assets/images/AppointmentImages/1.png";
 import Img2 from "../../Assets/images/AppointmentImages/2.png";
 import Img3 from "../../Assets/images/AppointmentImages/3.png";
 import Img4 from "../../Assets/images/AppointmentImages/4.png";
 import HorizontalDots from "../../Assets/images/AppointmentImages/horizontal_dots.png";
 import styled from "styled-components";
-
+import db from "../../db";
+import {
+  onSnapshot,
+  collection,
+  query,
+} from "firebase/firestore";
 const RecentPatient = () => {
-  const [appointmentTable, setAppointmentTable] = useState([
+  const [recentPatientTable, setrecentPatientTable] = useState([
     {
       id: 1,
       name: "Ghadeer Radwan",
@@ -37,14 +42,22 @@ const RecentPatient = () => {
       image: Img4,
     },
   ]);
-
+  useEffect(() => {
+    async function fetchRecentPatientAPI() {
+      const q = query(collection(db, "RecentPatient"));
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        setrecentPatientTable(querySnapshot.docs.map((d) => d.data()));
+      });
+    }
+    fetchRecentPatientAPI();
+  }, []);
   return (
-    <Recent_Patient>
+    <RecentPatientContainer>
       <div className="recent__patient__header">
         <p>{"Recent Patients"}</p>
         <a href="#">{"See All"}</a>
       </div>
-      {appointmentTable.map((ls, index) => (
+      {recentPatientTable.map((ls, index) => (
         <>
           <Recent_Patient_Body>
             <div className="recent__patient__left__container">
@@ -62,14 +75,14 @@ const RecentPatient = () => {
           </Recent_Patient_Body>
         </>
       ))}
-    </Recent_Patient>
+    </RecentPatientContainer>
   );
 };
 
 export default RecentPatient;
-const Recent_Patient = styled.section`
+const RecentPatientContainer = styled.section`
   width: 100%;
-  height: 460px;
+  height: auto;
   background-color: white;
   -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);

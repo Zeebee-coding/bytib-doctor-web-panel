@@ -1,12 +1,13 @@
 import "./App.css";
 import Routing from "./routing/Routing";
+import { Suspense } from "react";
 
 function App() {
   return (
-    <div className="App">
+    <Suspense fallback={null}>
       <Routing />
-    </div>
+    </Suspense>
   );
-}
+} 
 
 export default App;

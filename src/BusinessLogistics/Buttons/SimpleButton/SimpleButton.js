@@ -44,7 +44,8 @@ export default Simplebutton;
 const StyledSimpleButton = styled.section`
 font-size: 1.5vmax;
   button {
-    outline: none;
+  
     font-size: 1.5vmax;
+    border: none;
   }
 `;

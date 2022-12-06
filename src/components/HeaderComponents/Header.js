@@ -8,6 +8,8 @@ import RatingStar from "react-rating-stars-component";
 import { Link, useMatch } from "react-router-dom";
 import InfoButton from "./InfoButton";
 import { device } from "../../shared/BreakPoints";
+import db from "../../db";
+import {onSnapshot,collection,query} from "firebase/firestore"
 function Header() {
   let headerHistory = null;
   let login = useMatch('/')
@@ -16,12 +18,7 @@ function Header() {
   }
   let [showInfo, setShowInfo] = useState(false);
   const [BellToggle, setbellToggel] = useState(false);
-  const [Data, setdata] = useState([
-    { name: "David Lee", message: "sent you a message" },
-    { name: "Alex Jhonson", message: "sent you a message" },
-    { name: "Jonathan Chen", message: "sent you a message" },
-    { name: "David Lee", message: "sent you mail" },
-  ]);
+  const [Data, setdata] = useState([]);
   let useClickOutside = (handler) => {
     let domNode = useRef();
     useEffect(() => {
@@ -34,10 +31,8 @@ function Header() {
       };
       document.addEventListener("mousedown", maybeHandler);
     });
-
     return domNode;
   };
-
   const domNode = useClickOutside(() => {
     setbellToggel(false);
   });
@@ -60,6 +55,15 @@ function Header() {
       console.log("Example 3: new value is: ${newValue}");
     },
   };
+  useEffect (()=>{
+ async function fetchDataAPI(){
+  const q = query(collection(db,"MessageUser"));
+  const unsub = onSnapshot(q,(querySnapshot)=>{
+    setdata(querySnapshot.docs.map((d)=>d.data()));
+  })
+ }
+ fetchDataAPI();
+  },[]);
   return (
     <>
       <HeaderContainer props={headerHistory}>
@@ -74,7 +78,7 @@ function Header() {
                 <div>
                   <h3>Notifications</h3>
                   <hr></hr>
-                  {Data.map((item, index) => {
+                  {Data.map((ls) => {
                     return (
                       <>
                         <MenuItems>
@@ -83,9 +87,9 @@ function Header() {
                           </Image>
                           <Notify>
                             <p>
-                              {item.name} {item.message}
+                              {ls.Name} {ls.Message}
                             </p>
-                            <span>4 min ago</span>
+                            <span>{ls.createdDate}</span>
                           </Notify>
                         </MenuItems>
                         <hr></hr>
@@ -111,7 +115,6 @@ function Header() {
               <NotificationsNoneRoundedIcon onClick={BellToggleHandler} />
               <GreenDots></GreenDots>
             </span>
-
             <InfoButton show={showInfo} message=<DropdownContent /> />
           </Dropdown>
         </NotificationSection>
@@ -131,7 +134,6 @@ function Header() {
     </>
   );
 }
-
 export default Header;
 const HeaderContainer = styled.section`
   display: ${(props) => (props.props === true ? "none" : "flex")};
@@ -175,7 +177,6 @@ const NotificationSection = styled.section`
   justify-content: center;
   align-items: center;
   width: 2%;
-
   .css-i4bv87-MuiSvgIcon-root {
     font-size: 1.8rem;
     animation: notification 2s infinite;
@@ -204,7 +205,6 @@ const GreenDots = styled.section`
   background-color: green;
   border-radius: 50%;
 `;
-
 const Dropdown = styled.section`
   display: block;
   span {
@@ -271,7 +271,7 @@ const Notify = styled.section`
 const ViewAllNotifications = styled.section`
   text-align: center;
   h4 {
-    color: #70b5d3;
+    color: #70B5D3;
     font-weight: 600;
     cursor: pointer;
     font-size: 11px;
@@ -293,20 +293,16 @@ const DoctorProfile = styled.section`
   }
 `;
 const User = styled.section`
- 
     width: 70%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   text-align: start;
 `;
-
 const DocData = styled.div`
-
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   h1 {
     ${'' /* font-size: clamp(0.5em, 2vh, 4em); */}
     font-size:  1em;

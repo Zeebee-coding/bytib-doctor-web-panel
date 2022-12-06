@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+import { colors } from "../shared/colors";
+import { useTranslation } from "react-i18next";
 
 const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
   const pageNumbers = [];
+  const { t } = useTranslation(["sidebar"])
 
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
     pageNumbers.push(i);
@@ -20,7 +23,7 @@ const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
               </li>
             ))}
             <li class="page-item">
-              <a class="page-link">{"Next"}</a>
+              <a class="page-link">{t("Next")}</a>
             </li>
           </ul>
       </nav>
@@ -30,30 +33,32 @@ const Pagination = ({ postsPerPage, totalPosts, paginate }) => {
 
 export default Pagination;
 const Container = styled.section`
-  
-  ul{
-    display: flex;
-   li{
-    list-style: none;
-    cursor: pointer;
-
-    a{
-        background-color: white;
-    color: black;
-    margin-right: 10px;
-    padding: 5px  10px;
-        
-    }
-    a:focus {
-    box-shadow: none;
-    cursor: pointer;
+.pagination_table{
+  display: flex;
+  flex: flex-end;
+  margin-top: 30px;
 }
-a:hover {
+  .pagination_table>li{
+    list-style: none;
+  }
+  .pagination_table>li>a {
+    background-color: white;
+    color: black;
+    padding: 10px 15px;
+    border: 1px solid ${colors.gray};
+}
+
+.pagination_table>li>a:focus {
+    box-shadow: 2px black;
+}
+
+.pagination_table>li>a:hover {
     background-color: black;
     color: white;
+    box-shadow: 2px  10px  10px #103641;
+    margin-right: 5px;
+    cursor: pointer;
 }
-}}
-
 `;
 
 

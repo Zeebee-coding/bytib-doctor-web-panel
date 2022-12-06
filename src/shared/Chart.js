@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { colors } from "../../shared/colors";
+import { colors } from "./colors";
 
 const Chart = ({aspect }) => {
   const data = [

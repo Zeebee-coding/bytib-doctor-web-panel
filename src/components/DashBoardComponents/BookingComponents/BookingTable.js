@@ -1,91 +1,33 @@
-import React, { useState } from "react";
-import Img1 from "../../../Assets/images/AppointmentImages/1.png";
-import Img2 from "../../../Assets/images/Reports/2.png";
-import Img3 from "../../../Assets/images/Reports/3.png";
-import Img4 from "../../../Assets/images/Reports/4.png";
-import Img5 from "../../../Assets/images/Reports/5.png";
-import Img6 from "../../../Assets/images/Reports/6.png";
-// import Paper from '../../../Assets/Images/Reports/Paper.png'
+import React, { useState, useEffect } from "react";
 import HorizontalDots from "../../../Assets/images/Reports/dots-horizontal.png";
-import Pagination from "./Pagination";
+import Pagination from "../../../shared/Pagination";
 import styled from "styled-components";
+import db from "../../../db";
+// import Icon from "../../../dp.jpg"
+import {
+  onSnapshot,
+  collection,
+  query,
+} from "firebase/firestore";
 const BookingTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [postsPerPage] = useState(4);
-  const [tableObject, setTableObject] = useState([
-    {
-      id: 1,
-      image: Img1,
-      gender: "Female",
-      name: "Beanie",
-      age: "19",
-      date: "11/03/2020",
-      Id: "1234",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-    {
-      id: 2,
-      image: Img2,
-      gender: "Female",
-      name: "Beanie",
-      age: "20",
-      date: "11/03/2020",
-      Id: "2563",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-    {
-      id: 3,
-      image: Img3,
-      gender: "Female",
-      name: "Beanie",
-      age: "21",
-      date: "11/03/2020",
-      Id: "7896",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-    {
-      id: 4,
-      image: Img4,
-      gender: "Female",
-      name: "Beanie",
-      age: "22",
-      date: "11/03/2020",
-      Id: "4178",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-    {
-      id: 5,
-      image: Img5,
-      gender: "Female",
-      name: "Beanie",
-      age: "21",
-      date: "11/03/2020",
-      Id: "7896",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-    {
-      id: 6,
-      image: Img6,
-      gender: "Female",
-      name: "Beanie",
-      age: "22",
-      date: "11/03/2020",
-      Id: "4178",
-      detail: "view reports",
-      editIcon: HorizontalDots,
-    },
-  ]);
+  const [appointment, setappointment] = useState([]);
   // Get current posts
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = tableObject.slice(indexOfFirstPost, indexOfLastPost);
+  const currentPosts = appointment.slice(indexOfFirstPost, indexOfLastPost);
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  useEffect(() => {
+    async function fetchBookingtableAPI() {
+      const q = query(collection(db, "Appointment"));
+      const unsub = onSnapshot(q, (querySnapshot) => {
+        setappointment(querySnapshot.docs.map((d) => d.data()));
+      });
+    }
+    fetchBookingtableAPI();
+  }, []);
   return (
     <BookingContainer>
       <table>
@@ -99,27 +41,26 @@ const BookingTable = () => {
             <th scope="col" className="emptyData"></th>
           </tr>
         </thead>
-
         <tbody>
           {currentPosts.map((ls) => (
             <tr className="">
               <td className="booking__first_column">
-                <img src={ls.image} alt="" />
-                {ls.name}
+                {/* <img src={Icon} alt="" /> */}
+                {ls.PatientName}
               </td>
               <td className="">
                 <p className="second_column11 bookings__common_design">
-                  {ls.gender}
+                  Male
                 </p>
               </td>
               <td className="">
                 <p className="second_column bookings__common_design">
-                  {ls.age}
+                  {ls.PatientAge}
                 </p>
               </td>
               <td className="">
                 <p className="third_column bookings__common_design">
-                  {ls.date}
+                  {ls.Date}
                 </p>
               </td>
               <td className="">
@@ -129,25 +70,27 @@ const BookingTable = () => {
                 <span>{ls.detail}</span>
                 <img
                   className="booking__sixth_column_img"
-                  src={ls.editIcon}
+                  src={HorizontalDots}
                   alt=""
                 />
               </td>
             </tr>
           ))}
-          <Pagination
+        
+        </tbody>
+       
+      </table>
+      <hr></hr>
+
+      <Pagination
             postsPerPage={postsPerPage}
-            totalPosts={tableObject.length}
+            totalPosts={appointment.length}
             paginate={paginate}
           />
-        </tbody>
-      </table>
     </BookingContainer>
   );
 };
-
 export default BookingTable;
-
 const BookingContainer = styled.section`
   background-color: white;
   margin-top: 10px;
@@ -155,12 +98,11 @@ const BookingContainer = styled.section`
   box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
   padding: 10px;
   border-radius: 10px;
-
   table {
     width: 100%;
     border-spacing: 0;
     tr:nth-child(even) {
-      background-color: #f2f2f2;
+      background-color: #F2F2F2;
     }
     thead {
       tr {
@@ -179,7 +121,6 @@ const BookingContainer = styled.section`
       display: flex;
       justify-content: center;
       align-items: center;
-
       img {
         height: 30px;
         width: 30px;
@@ -192,14 +133,12 @@ const BookingContainer = styled.section`
       margin: 25px 15px 10px 12px;
       font-size: 13px;
     }
-
     .booking__sixth_column {
       display: flex;
       justify-content: center;
       align-items: center;
       margin-top: 10px;
     }
-
     .booking__sixth_column_img {
       margin: 30px 15px 30px 20px;
       cursor: pointer;
